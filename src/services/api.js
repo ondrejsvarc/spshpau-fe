@@ -50,7 +50,7 @@ export const updateUserLocation = (locationData) => request('/users/me/location'
 
 // --- Artist Profile API Calls ---
 export const getMyArtistProfile = () => request('/users/artist-profile/me', 'GET');
-export const createOrUpdateArtistProfile = (profileData) => request('/users/artist-profile/me/create', 'PUT', profileData); // Endpoint is /create for PUT
+export const createOrUpdateArtistProfile = (profileData) => request('/users/artist-profile/me/create', 'PUT', profileData);
 export const patchMyArtistProfile = (profileData) => request('/users/artist-profile/me/patch', 'PATCH', profileData);
 
 export const addGenreToArtistProfile = (genreId) => request(`/users/artist-profile/me/genres/add/${genreId}`, 'POST');
@@ -58,6 +58,15 @@ export const removeGenreFromArtistProfile = (genreId) => request(`/users/artist-
 
 export const addSkillToArtistProfile = (skillId) => request(`/users/artist-profile/me/skills/add/${skillId}`, 'POST');
 export const removeSkillFromArtistProfile = (skillId) => request(`/users/artist-profile/me/skills/remove/${skillId}`, 'DELETE');
+
+// --- Producer Profile API Calls ---
+export const getMyProducerProfile = () => request('/users/producer-profile/me', 'GET');
+export const createOrUpdateProducerProfile = (profileData) => request('/users/producer-profile/me/create', 'PUT', profileData);
+export const patchMyProducerProfile = (profileData) => request('/users/producer-profile/me/patch', 'PATCH', profileData);
+
+export const addGenreToProducerProfile = (genreId) => request(`/users/producer-profile/me/genres/add/${genreId}`, 'POST');
+export const removeGenreFromProducerProfile = (genreId) => request(`/users/producer-profile/me/genres/remove/${genreId}`, 'DELETE');
+
 
 // --- General Genre & Skill API Calls (from UserService) ---
 export const getAllGenres = (page = 0, size = 20, sort = 'name,asc') => request(`/genres?page=${page}&size=${size}&sort=${sort}`, 'GET');
