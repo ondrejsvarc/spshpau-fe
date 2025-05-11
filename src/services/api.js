@@ -48,6 +48,11 @@ export const syncUserWithBackend = () => request('/users/me/sync', 'PUT');
 export const getCurrentUserFromBackend = () => request('/users/me', 'GET');
 export const updateUserLocation = (locationData) => request('/users/me/location', 'PUT', locationData);
 
+// --- User Service - Fetching other user's data ---
+export const getUserSummaryById = (userId) => request(`/users/search/id/${userId}`, 'GET');
+export const getArtistProfileByUsername = (username) => request(`/users/artist-profile/${username}`, 'GET');
+export const getProducerProfileByUsername = (username) => request(`/users/producer-profile/${username}`, 'GET');
+
 // --- Artist Profile API Calls ---
 export const getMyArtistProfile = () => request('/users/artist-profile/me', 'GET');
 export const createOrUpdateArtistProfile = (profileData) => request('/users/artist-profile/me/create', 'PUT', profileData);
