@@ -48,10 +48,46 @@ export const syncUserWithBackend = () => request('/users/me/sync', 'PUT');
 export const getCurrentUserFromBackend = () => request('/users/me', 'GET');
 export const updateUserLocation = (locationData) => request('/users/me/location', 'PUT', locationData);
 
-// --- User Service - Fetching other user's data ---
+// --- Fetching other user's data ---
 export const getUserSummaryById = (userId) => request(`/users/search/id/${userId}`, 'GET');
 export const getArtistProfileByUsername = (username) => request(`/users/artist-profile/${username}`, 'GET');
 export const getProducerProfileByUsername = (username) => request(`/users/producer-profile/${username}`, 'GET');
+
+// --- Search and Matches ---
+export const searchUsers = (searchCriteria, page = 0, size = 10, sort = 'username,asc') => {
+    const params = new URLSearchParams();
+
+    if (searchCriteria) {
+        for (const key in searchCriteria) {
+            if (Object.prototype.hasOwnProperty.call(searchCriteria, key)) {
+                const value = searchCriteria[key];
+                if (Array.isArray(value)) {
+                    value.forEach(item => params.append(key, item));
+                } else if (value !== null && value !== undefined && value !== '') {
+                    params.append(key, value);
+                }
+            }
+        }
+    }
+
+    params.append('page', page.toString());
+    params.append('size', size.toString());
+    if (sort && sort.trim() !== '') {
+        params.append('sort', sort);
+    }
+
+    console.log('API searchUsers - Final Query Params being sent to backend:', params.toString());
+    return request(`/users/search/filter?${params.toString()}`, 'GET');
+};
+
+export const getMatches = (page = 0, size = 10, sort = '') => {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        size: size.toString(),
+    });
+    if (sort) params.append('sort', sort);
+    return request(`/users/matches?${params.toString()}`, 'GET');
+};
 
 // --- Artist Profile API Calls ---
 export const getMyArtistProfile = () => request('/users/artist-profile/me', 'GET');

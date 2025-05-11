@@ -10,6 +10,7 @@ import {alpha, styled} from '@mui/material/styles';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
 import ChatIcon from '@mui/icons-material/Chat';
+import { useNavigate } from 'react-router-dom';
 
 const TilePaper = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
@@ -30,6 +31,7 @@ const TilePaper = styled(Paper)(({ theme }) => ({
 
 function HomePage() {
     const { keycloak, initialized } = useKeycloak();
+    const navigate = useNavigate();
 
     if (!initialized) {
         return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}><Typography>Loading authentication...</Typography></Box>;
@@ -72,10 +74,10 @@ function HomePage() {
                         </Typography>
                         <Grid container spacing={4} justifyContent="center">
                             <Grid item xs={12} sm={6} md={4}>
-                                <TilePaper onClick={() => handleTileClick('User Service')}>
+                                <TilePaper onClick={() => navigate('/users/matches')}>
                                     <AccountCircleIcon sx={{ fontSize: 40, mb: 1 }} color="primary"/>
-                                    <Typography variant="h6">User Service</Typography>
-                                    <Typography variant="body2">Manage your profile and connections.</Typography>
+                                    <Typography variant="h6">Look for Collaborators</Typography>
+                                    <Typography variant="body2">Find collaborators and search users.</Typography>
                                 </TilePaper>
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}>

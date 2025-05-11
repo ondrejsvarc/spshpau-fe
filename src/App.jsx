@@ -8,6 +8,8 @@ import ArtistProfilePage from './pages/ArtistProfilePage';
 import ProducerProfilePage from './pages/ProducerProfilePage';
 import CreateArtistProfilePage from './pages/CreateArtistProfilePage';
 import CreateProducerProfilePage from './pages/CreateProducerProfilePage';
+import MatchesPage from './pages/MatchesPage';
+import UserSearchPage from './pages/UserSearchPage';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -69,6 +71,12 @@ function App() {
                             } />
                             <Route path="/users/:userId" element={
                                 <ProtectedRoute><UserProfilePage /></ProtectedRoute>
+                            } />
+                            <Route path="/users/search" element={
+                                <ProtectedRoute><UserSearchPage /></ProtectedRoute>
+                            } />
+                            <Route path="/users/matches" element={
+                                <ProtectedRoute><MatchesPage /></ProtectedRoute>
                             } />
                         </Routes>
                     </Box>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useUser } from '../contexts/UserContext';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -62,6 +62,7 @@ function Navbar() {
     const { appUser, loadingUser, keycloakAuthenticated } = useUser();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const navigate = useNavigate();
+    const [searchTerm, setSearchTerm] = useState('');
 
     const handleMenu = (event) => setAnchorEl(event.currentTarget);
     const handleClose = () => setAnchorEl(null);
@@ -86,6 +87,19 @@ function Navbar() {
         navigate('/blocks');
     };
 
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    const handleSearchSubmit = (event) => {
+        if (event.key === 'Enter' || event.type === 'submit') {
+            event.preventDefault();
+            const term = searchTerm.trim();
+            navigate(`/users/search${term ? `?searchTerm=${encodeURIComponent(term)}` : ''}`);
+            // setSearchTerm('');
+        }
+    };
+
     let displayName = 'User';
     if (appUser) {
         displayName = `${appUser.firstName || ''} ${appUser.lastName || ''}`.trim() || appUser.username;
@@ -105,10 +119,20 @@ function Navbar() {
                     SPSHPAU
                 </Typography>
 
-                <Search>
-                    <SearchIconWrapper><SearchIcon /></SearchIconWrapper>
-                    <StyledInputBase placeholder="Search…" inputProps={{ 'aria-label': 'search' }} />
-                </Search>
+                <Box component="form" onSubmit={handleSearchSubmit} sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Search>
+                        <SearchIconWrapper>
+                            <SearchIcon />
+                        </SearchIconWrapper>
+                        <StyledInputBase
+                            placeholder="Search users…"
+                            inputProps={{ 'aria-label': 'search users' }}
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            onKeyPress={handleSearchSubmit}
+                        />
+                    </Search>
+                </Box>
                 <Box sx={{ flexGrow: 1 }} />
 
                 {keycloakAuthenticated ? (
