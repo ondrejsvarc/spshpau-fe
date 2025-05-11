@@ -51,3 +51,7 @@ export const syncUserWithBackend = () => {
 export const getCurrentUserFromBackend = () => {
     return request('/users/me', 'GET');
 };
+
+export const updateUserLocation = (locationData) => {
+    return request('/users/me/location', 'PUT', locationData);
+};

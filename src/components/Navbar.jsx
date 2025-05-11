@@ -13,6 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import keycloak from '../keycloak';
+import { useNavigate } from 'react-router-dom';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -58,14 +59,21 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 
 function Navbar() {
-    const { appUser, loadingUser, userError, keycloakInitialized, keycloakAuthenticated } = useUser();
+    const { appUser, loadingUser, userError, keycloakAuthenticated } = useUser();
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const navigate = useNavigate();
 
     const handleMenu = (event) => setAnchorEl(event.currentTarget);
     const handleClose = () => setAnchorEl(null);
+
     const handleLogout = () => {
         setAnchorEl(null);
-        keycloak.logout();
+        keycloak.logout({ redirectUri: window.location.origin });
+    };
+
+    const handleAccount = () => {
+        setAnchorEl(null);
+        navigate('/account');
     };
 
     let displayName = 'User';
@@ -75,20 +83,15 @@ function Navbar() {
         displayName = keycloak.tokenParsed.given_name || keycloak.tokenParsed.preferred_username;
     }
 
-
-    if (!keycloakInitialized || loadingUser) {
-        return <AppBar position="static"><Toolbar><Typography>Loading user...</Typography></Toolbar></AppBar>;
-    }
-
-    if (userError) {
-        console.error("Navbar userError:", userError)
-    }
-
-
     return (
         <AppBar position="static">
             <Toolbar>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                <Typography
+                    variant="h6"
+                    component="div"
+                    sx={{ flexGrow: 1, cursor: 'pointer' }}
+                    onClick={() => navigate('/')}
+                >
                     SPSHPAU
                 </Typography>
 
@@ -109,7 +112,7 @@ function Navbar() {
                             color="inherit"
                         >
                             <AccountCircle />
-                            <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                            <Typography variant="subtitle1" sx={{ ml: 1, display: { xs: 'none', sm: 'block' } }}>
                                 {loadingUser ? 'Loading...' : displayName}
                             </Typography>
                         </IconButton>
@@ -122,6 +125,7 @@ function Navbar() {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
+                            <MenuItem onClick={handleAccount}>My Account</MenuItem>
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </Menu>
                     </div>

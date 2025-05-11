@@ -2,9 +2,17 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
+import AccountPage from './pages/AccountPage';
+
+import ArtistProfilePage from './pages/ArtistProfilePage';
+import ProducerProfilePage from './pages/ProducerProfilePage';
+import CreateArtistProfilePage from './pages/CreateArtistProfilePage';
+import CreateProducerProfilePage from './pages/CreateProducerProfilePage';
+
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const theme = createTheme({
     palette: {
@@ -18,25 +26,38 @@ function App() {
         <Router>
             <ThemeProvider theme={theme}>
                 <CssBaseline />
-                {/* This outer Box should be full width and at least full height */}
-                <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}> {/* Explicitly add width: '100%' here too */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
                     <Navbar />
-                    {/* This main content Box should grow to fill available space and be full width */}
                     <Box
                         component="main"
                         sx={{
-                            flexGrow: 1, // Takes up available vertical space
-                            py: 3,       // Vertical padding
-                            px: 2,       // Horizontal padding
-                            width: '100%', // Ensure it tries to be full width of its parent
-                            display: 'flex', // Added to help center the Container from HomePage if needed
-                            flexDirection: 'column', // Stack children vertically (like HomePage)
-                            // alignItems: 'center' // Remove this if HomePage's Container should span full width before centering
+                            flexGrow: 1,
+                            py: 3,
+                            px: { xs: 2, sm: 3 },
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
                         }}
                     >
                         <Routes>
                             <Route path="/" element={<HomePage />} />
-                            {/* Other routes */}
+                            <Route path="/account" element={
+                                <ProtectedRoute>
+                                    <AccountPage />
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/account/artist-profile" element={
+                                <ProtectedRoute><ArtistProfilePage /></ProtectedRoute>
+                            } />
+                            <Route path="/account/producer-profile" element={
+                                <ProtectedRoute><ProducerProfilePage /></ProtectedRoute>
+                            } />
+                            <Route path="/account/artist-profile/create" element={
+                                <ProtectedRoute><CreateArtistProfilePage /></ProtectedRoute>
+                            } />
+                            <Route path="/account/producer-profile/create" element={
+                                <ProtectedRoute><CreateProducerProfilePage /></ProtectedRoute>
+                            } />
                         </Routes>
                     </Box>
                 </Box>
