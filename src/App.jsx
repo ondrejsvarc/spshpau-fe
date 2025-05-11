@@ -13,6 +13,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import ProtectedRoute from './components/ProtectedRoute';
+import ConnectionsPage from "./pages/ConnectionsPage.jsx";
+import BlocksPage from "./pages/BlocksPage.jsx";
+import UserProfilePage from "./pages/UserProfilePage.jsx";
 
 const theme = createTheme({
     palette: {
@@ -57,6 +60,15 @@ function App() {
                             } />
                             <Route path="/account/producer-profile/create" element={
                                 <ProtectedRoute><CreateProducerProfilePage /></ProtectedRoute>
+                            } />
+                            <Route path="/connections" element={
+                                <ProtectedRoute><ConnectionsPage /></ProtectedRoute>
+                            } />
+                            <Route path="/blocks" element={
+                                <ProtectedRoute><BlocksPage /></ProtectedRoute>
+                            } />
+                            <Route path="/users/:userId" element={
+                                <ProtectedRoute><UserProfilePage /></ProtectedRoute>
                             } />
                         </Routes>
                     </Box>

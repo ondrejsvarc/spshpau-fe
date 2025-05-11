@@ -67,6 +67,23 @@ export const patchMyProducerProfile = (profileData) => request('/users/producer-
 export const addGenreToProducerProfile = (genreId) => request(`/users/producer-profile/me/genres/add/${genreId}`, 'POST');
 export const removeGenreFromProducerProfile = (genreId) => request(`/users/producer-profile/me/genres/remove/${genreId}`, 'DELETE');
 
+// --- User Interaction API Calls ---
+export const getMyConnections = (page = 0, size = 20, sort = '') => request(`/interactions/me/connections?page=${page}&size=${size}&sort=${sort}`, 'GET');
+export const getAllMyConnections = () => request(`/interactions/me/connections/all`, 'GET');
+export const getMyIncomingRequests = (page = 0, size = 10, sort = '') => request(`/interactions/me/connections/requests/incoming?page=${page}&size=${size}&sort=${sort}`, 'GET');
+export const getMyOutgoingRequests = (page = 0, size = 10, sort = '') => request(`/interactions/me/connections/requests/outgoing?page=${page}&size=${size}&sort=${sort}`, 'GET');
+
+export const sendConnectionRequest = (addresseeId) => request(`/interactions/me/connections/request/${addresseeId}`, 'POST');
+export const acceptConnectionRequest = (requesterId) => request(`/interactions/me/connections/accept/${requesterId}`, 'POST');
+export const rejectConnectionRequest = (requesterId) => request(`/interactions/me/connections/reject/${requesterId}`, 'DELETE');
+export const removeConnection = (otherUserId) => request(`/interactions/me/connections/remove/${otherUserId}`, 'DELETE');
+
+export const getMyBlockedUsers = (page = 0, size = 20, sort = '') => request(`/interactions/me/blocks?page=${page}&size=${size}&sort=${sort}`, 'GET');
+export const unblockUser = (blockedId) => request(`/interactions/me/blocks/unblock/${blockedId}`, 'DELETE');
+export const blockUser = (blockedId) => request(`/interactions/me/blocks/block/${blockedId}`, 'POST');
+
+export const getInteractionStatusWithUser = (otherUserId) => request(`/interactions/me/status/${otherUserId}`, 'GET');
+
 
 // --- General Genre & Skill API Calls (from UserService) ---
 export const getAllGenres = (page = 0, size = 20, sort = 'name,asc') => request(`/genres?page=${page}&size=${size}&sort=${sort}`, 'GET');

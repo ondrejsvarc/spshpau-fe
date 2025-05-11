@@ -59,7 +59,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 
 function Navbar() {
-    const { appUser, loadingUser, userError, keycloakAuthenticated } = useUser();
+    const { appUser, loadingUser, keycloakAuthenticated } = useUser();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const navigate = useNavigate();
 
@@ -74,6 +74,16 @@ function Navbar() {
     const handleAccount = () => {
         setAnchorEl(null);
         navigate('/account');
+    };
+
+    const handleConnections = () => {
+        setAnchorEl(null);
+        navigate('/connections');
+    };
+
+    const handleBlocks = () => {
+        setAnchorEl(null);
+        navigate('/blocks');
     };
 
     let displayName = 'User';
@@ -126,6 +136,8 @@ function Navbar() {
                             onClose={handleClose}
                         >
                             <MenuItem onClick={handleAccount}>My Account</MenuItem>
+                            <MenuItem onClick={handleConnections}>My Connections</MenuItem>
+                            <MenuItem onClick={handleBlocks}>My Blocks</MenuItem>
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </Menu>
                     </div>
