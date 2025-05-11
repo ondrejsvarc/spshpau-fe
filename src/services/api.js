@@ -44,14 +44,21 @@ const request = async (endpoint, method = 'GET', body = null) => {
 };
 
 // --- User Service API Calls ---
-export const syncUserWithBackend = () => {
-    return request('/users/me/sync', 'PUT');
-};
+export const syncUserWithBackend = () => request('/users/me/sync', 'PUT');
+export const getCurrentUserFromBackend = () => request('/users/me', 'GET');
+export const updateUserLocation = (locationData) => request('/users/me/location', 'PUT', locationData);
 
-export const getCurrentUserFromBackend = () => {
-    return request('/users/me', 'GET');
-};
+// --- Artist Profile API Calls ---
+export const getMyArtistProfile = () => request('/users/artist-profile/me', 'GET');
+export const createOrUpdateArtistProfile = (profileData) => request('/users/artist-profile/me/create', 'PUT', profileData); // Endpoint is /create for PUT
+export const patchMyArtistProfile = (profileData) => request('/users/artist-profile/me/patch', 'PATCH', profileData);
 
-export const updateUserLocation = (locationData) => {
-    return request('/users/me/location', 'PUT', locationData);
-};
+export const addGenreToArtistProfile = (genreId) => request(`/users/artist-profile/me/genres/add/${genreId}`, 'POST');
+export const removeGenreFromArtistProfile = (genreId) => request(`/users/artist-profile/me/genres/remove/${genreId}`, 'DELETE');
+
+export const addSkillToArtistProfile = (skillId) => request(`/users/artist-profile/me/skills/add/${skillId}`, 'POST');
+export const removeSkillFromArtistProfile = (skillId) => request(`/users/artist-profile/me/skills/remove/${skillId}`, 'DELETE');
+
+// --- General Genre & Skill API Calls (from UserService) ---
+export const getAllGenres = (page = 0, size = 20, sort = 'name,asc') => request(`/genres?page=${page}&size=${size}&sort=${sort}`, 'GET');
+export const getAllSkills = (page = 0, size = 20, sort = 'name,asc') => request(`/skills?page=${page}&size=${size}&sort=${sort}`, 'GET');
