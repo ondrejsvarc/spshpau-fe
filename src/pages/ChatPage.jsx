@@ -54,6 +54,7 @@ const TimestampText = styled(Typography)(({ theme, isSender }) => ({
 
 
 function ChatPage() {
+    const stompClientRef = useRef(null);
     const { recipientId: recipientIdFromUrl } = useParams();
     const navigate = useNavigate();
     const { appUser, keycloakAuthenticated, keycloakInitialized } = useUser();
@@ -172,6 +173,7 @@ function ChatPage() {
             });
 
             client.activate();
+            stompClientRef.current = client;
             setStompClient(client);
         }
 
@@ -189,52 +191,6 @@ function ChatPage() {
             }
         };
     }, [keycloakAuthenticated, appUser?.id, keycloak.token]);
-
-
-    // --- Fetch Initial Chat Summaries ---
-    const fetchSummaries = useCallback(async () => {
-        if (!keycloakAuthenticated) return;
-        setLoadingSummaries(true);
-        setError(null);
-        try {
-            const summaries = await getChatSummaries();
-            console.log("Fetched chat summaries:", summaries);
-            setChatSummaries(summaries || []);
-            setOnlineUsers(prevOnline => {
-                const newOnline = {...prevOnline};
-                (summaries || []).forEach(s => {
-                    if (s.chatPartner?.id && s.chatPartner.status) {
-                        newOnline[s.chatPartner.id] = s.chatPartner.status;
-                    }
-                });
-                return newOnline;
-            });
-
-
-            if (recipientIdFromUrl && initialChatLoad && summaries && summaries.length > 0) {
-                const targetSummary = summaries.find(s => s.chatPartner.id === recipientIdFromUrl);
-                if (targetSummary) {
-                    await handleSelectChat(targetSummary);
-                }
-                setInitialChatLoad(false);
-            }
-
-        } catch (err) {
-            console.error("Failed to fetch chat summaries:", err);
-            setError(err.message || "Could not load your chats.");
-        } finally {
-            setLoadingSummaries(false);
-        }
-    }, [keycloakAuthenticated, recipientIdFromUrl, initialChatLoad]);
-
-
-    useEffect(() => {
-        if (isConnected) {
-            fetchSummaries();
-        }
-    }, [isConnected, fetchSummaries]);
-
-
 
     // --- Handle Chat Selection ---
     const handleSelectChat = useCallback(async (summary) => {
@@ -268,36 +224,157 @@ function ChatPage() {
             setLoadingMessages(false);
             setTimeout(scrollToBottom, 0);
         }
+
+        if (activeChatPollIntervalRef.current) {
+            clearInterval(activeChatPollIntervalRef.current);
+        }
+
+        if (summary.chatPartner.id && appUser?.id) {
+            activeChatPollIntervalRef.current = setInterval(async () => {
+                console.log(`Polling messages for chat with ${summary.chatPartner.username}`);
+                try {
+                    if (selectedChatRef.current?.recipient?.id === summary.chatPartner.id) {
+                        const freshMessages = await getChatMessagesBetweenUsers(appUser.id, summary.chatPartner.id);
+                        setMessages(freshMessages || []);
+                    } else {
+                        clearInterval(activeChatPollIntervalRef.current);
+                    }
+                } catch (pollError) {
+                    console.error("Error polling messages:", pollError);
+                }
+            }, 5000);
+            console.log(`Polling started for chat with ${summary.chatPartner.username}`);
+        }
     }, [appUser?.id, stompClient, selectedChat?.chatId]);
 
+    const selectedChatRef = useRef(selectedChat);
+    useEffect(() => {
+        selectedChatRef.current = selectedChat;
+    }, [selectedChat]);
+
+    useEffect(() => {
+        return () => {
+            if (activeChatPollIntervalRef.current) {
+                clearInterval(activeChatPollIntervalRef.current);
+                console.log("Cleared active chat polling interval on unmount/chat change.");
+            }
+        };
+    }, []);
+
+    const CHAT_SUMMARIES_REFRESH_INTERVAL = 5000;
+    const chatSummariesIntervalRef = useRef(null);
+
+    // --- Fetch Initial Chat Summaries ---
+    const fetchSummaries = useCallback(async (isPeriodicRefresh = false) => {
+        if (!keycloakAuthenticated || !isConnected) {
+            if (!isPeriodicRefresh) setLoadingSummaries(true);
+            return;
+        }
+        if (!isPeriodicRefresh) setLoadingSummaries(true);
+        // setError(null);
+
+        console.log(isPeriodicRefresh ? 'ChatPage: Periodically refreshing chat summaries...' : 'ChatPage: Fetching initial chat summaries...');
+        try {
+            const summaries = await getChatSummaries();
+            const sortedSummaries = (summaries || []).sort((a,b) => {
+                const dateA = a.latestMessageTimestamp ? new Date(a.latestMessageTimestamp) : new Date(0);
+                const dateB = b.latestMessageTimestamp ? new Date(b.latestMessageTimestamp) : new Date(0);
+                return dateB - dateA;
+            });
+
+            setChatSummaries(prevSummaries => {
+                return sortedSummaries;
+            });
+
+            setOnlineUsers(prevOnline => {
+                const newOnline = {...prevOnline};
+                (summaries || []).forEach(s => {
+                    if (s.chatPartner?.id && s.chatPartner.status) {
+                        newOnline[s.chatPartner.id] = s.chatPartner.status;
+                    } else if (s.chatPartner?.id && !newOnline[s.chatPartner.id]) {
+                        newOnline[s.chatPartner.id] = 'OFFLINE';
+                    }
+                });
+                return newOnline;
+            });
+
+
+            if (recipientIdFromUrl && !initialChatLoad && summaries && summaries.length > 0) {
+                const targetSummary = summaries.find(s => s.chatPartner.id === recipientIdFromUrl);
+                if (targetSummary) {
+                    handleSelectChat(targetSummary);
+                }
+                setInitialChatLoad(true);
+            }
+
+        } catch (err) {
+            console.error("Failed to fetch chat summaries:", err);
+            if (!isPeriodicRefresh) {
+                setError(err.message || "Could not load your chats.");
+            } else {
+                console.warn("Periodic chat summary refresh failed:", err.message);
+            }
+        } finally {
+            if (!isPeriodicRefresh) setLoadingSummaries(false);
+        }
+    }, [keycloakAuthenticated, isConnected, recipientIdFromUrl, initialChatLoad, handleSelectChat]);
+
+    useEffect(() => {
+        if (isConnected && appUser?.id) {
+            fetchSummaries();
+
+            if (chatSummariesIntervalRef.current) {
+                clearInterval(chatSummariesIntervalRef.current);
+            }
+            chatSummariesIntervalRef.current = setInterval(() => {
+                fetchSummaries(true);
+            }, CHAT_SUMMARIES_REFRESH_INTERVAL);
+
+            console.log('ChatPage: Chat summaries refresh interval started.');
+        }
+        return () => {
+            if (chatSummariesIntervalRef.current) {
+                clearInterval(chatSummariesIntervalRef.current);
+                console.log('ChatPage: Chat summaries refresh interval cleared.');
+            }
+        };
+    }, [isConnected, appUser?.id, fetchSummaries]);
+
+    const activeChatPollIntervalRef = useRef(null);
 
     // --- Handle Sending Message ---
     const handleSendMessage = (event) => {
         event.preventDefault();
-        if (newMessage.trim() && stompClient && stompClient.connected && selectedChat?.recipient?.id && appUser?.id) {
+        if (newMessage.trim() && stompClientRef.current?.connected && selectedChat?.recipient?.id && appUser?.id) {
+            const tempId = `temp-${Date.now()}`;
+            const sentAtTime = new Date().toISOString();
+
+            const optimisticMessage = {
+                id: tempId,
+                chatId: selectedChat.chatId || `temp-chat-${selectedChat.recipient.id}`,
+                senderId: appUser.id,
+                recipientId: selectedChat.recipient.id,
+                content: newMessage.trim(),
+                status: 'SENT',
+                sentAt: sentAtTime,
+            };
+
+            setMessages(prevMessages => [...prevMessages, optimisticMessage]);
+            scrollToBottom();
+
             const chatMessagePayload = {
                 senderId: appUser.id,
                 recipientId: selectedChat.recipient.id,
                 content: newMessage.trim(),
             };
-            stompClient.publish({
+
+            stompClientRef.current.publish({
                 destination: '/app/chat',
                 body: JSON.stringify(chatMessagePayload),
             });
 
-            // Optimistic update (optional, but good UX)
-            // const optimisticMessage = {
-            //   id: `temp-${Date.now()}`, // Temporary ID
-            //   senderId: appUser.id,
-            //   recipientId: selectedChat.recipient.id,
-            //   content: newMessage.trim(),
-            //   sentAt: new Date().toISOString(),
-            //   status: 'SENT',
-            //   chatId: selectedChat.chatId // This might be tricky if chatId is not yet known for a new chat
-            // };
-            // setMessages(prev => [...prev, optimisticMessage]);
-
             setNewMessage('');
+            fetchSummaries(true);
         }
     };
 

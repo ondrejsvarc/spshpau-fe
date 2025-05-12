@@ -37,10 +37,6 @@ function HomePage() {
         return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}><Typography>Loading authentication...</Typography></Box>;
     }
 
-    const handleTileClick = (serviceName) => {
-        alert(`Maps to ${serviceName} (routing to be implemented)`);
-    };
-
     return (
         <Container maxWidth="lg"> {}
             <Box sx={{ my: 4 }}>
@@ -88,7 +84,7 @@ function HomePage() {
                                 </TilePaper>
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}>
-                                <TilePaper onClick={() => handleTileClick('Chat Service')}>
+                                <TilePaper onClick={() => navigate('/chats')}>
                                     <ChatIcon sx={{ fontSize: 40, mb: 1 }} style={{ color: '#4caf50' }}/>
                                     <Typography variant="h6">Chat Service</Typography>
                                     <Typography variant="body2">Communicate with collaborators.</Typography>
