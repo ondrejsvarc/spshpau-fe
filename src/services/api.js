@@ -162,6 +162,10 @@ export const getProjectTasks = (projectId, page = 0, size = 10, sort = 'createdA
 
 // --- Milestones ---
 export const getProjectMilestones = (projectId, page = 0, size = 10, sort = 'dueDate,asc') => request(`/projects/${projectId}/milestones?page=${page}&size=${size}&sort=${sort}`, 'GET');
+export const createProjectMilestoneApi = (projectId, milestoneData) => request(`/projects/${projectId}/milestones`, 'POST', milestoneData);
+export const getProjectMilestoneByIdApi = (projectId, milestoneId) => request(`/projects/${projectId}/milestones/${milestoneId}`, 'GET');
+export const updateProjectMilestoneApi = (projectId, milestoneId, milestoneData) => request(`/projects/${projectId}/milestones/${milestoneId}`, 'PUT', milestoneData);
+export const deleteProjectMilestoneApi = (projectId, milestoneId) => request(`/projects/${projectId}/milestones/${milestoneId}`, 'DELETE');
 
 // --- Files ---
 export const getProjectFiles = (projectId) => request(`/projects/${projectId}/files`, 'GET');

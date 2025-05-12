@@ -128,7 +128,7 @@ const MilestoneCard = ({ milestone, projectId }) => {
                 </Typography>
             </CardContent>
             <CardActions>
-                <Button size="small" onClick={() => navigate(`/projects/${projectId}/milestones/${milestone.id}/edit`)}>View/Edit</Button>
+                <Button size="small" onClick={() => navigate(`/projects/${projectId}/milestones/${milestone.id}/edit`)}>Edit/Delete</Button>
             </CardActions>
         </Card>
     );
@@ -296,7 +296,7 @@ function ProjectDetailPage() {
                 <Box>
                     <Typography variant="h3" component="h1">{project.title}</Typography>
                     <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-                        Owned by: {project.owner?.firstName || ''} {project.owner?.lastName || ''} (@{project.owner?.username})
+                        Owned by: {project.owner?.firstName || ''} {project.owner?.lastName || ''} ({project.owner?.username})
                     </Typography>
                 </Box>
                 {isOwner && (

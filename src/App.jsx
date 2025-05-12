@@ -117,9 +117,6 @@ function App() {
                             <Route path="/projects/:projectId/milestones/:milestoneId/edit" element={
                                 <ProtectedRoute><MilestoneEditPage /></ProtectedRoute>
                             } />
-                            <Route path="/projects/:projectId/milestones/:milestoneId/edit" element={
-                                <ProtectedRoute><MilestoneEditPage /></ProtectedRoute>
-                            } />
                             <Route path="/projects/:projectId/budget/create" element={
                                 <ProtectedRoute><CreateBudgetPage /></ProtectedRoute>
                             } />
