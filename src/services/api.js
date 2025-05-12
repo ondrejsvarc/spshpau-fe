@@ -182,6 +182,8 @@ export const deleteProjectFileApi = (projectId, fileId) => request(`/projects/${
 
 // --- Collaborators ---
 export const getProjectCollaborators = (projectId, page = 0, size = 10, sort = '') => request(`/projects/${projectId}/collaborators?page=${page}&size=${size}&sort=${sort}`, 'GET');
+export const addProjectCollaboratorApi = (projectId, collaboratorId) => request(`/projects/${projectId}/collaborators/${collaboratorId}`, 'POST');
+export const removeProjectCollaboratorApi = (projectId, collaboratorId) => request(`/projects/${projectId}/collaborators/${collaboratorId}`, 'DELETE');
 
 // --- Budget ---
 export const getProjectBudget = (projectId) => request(`/projects/${projectId}/budget`, 'GET');
