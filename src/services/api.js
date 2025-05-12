@@ -167,6 +167,8 @@ export const getProjectMilestones = (projectId, page = 0, size = 10, sort = 'due
 export const getProjectFiles = (projectId) => request(`/projects/${projectId}/files`, 'GET');
 export const uploadProjectFileApi = (projectId, formData) => request(`/projects/${projectId}/files`, 'POST', formData, true);
 export const getProjectFileDownloadUrl = (projectId, fileId) => request(`/projects/${projectId}/files/${fileId}/download-url`, 'GET');
+export const getAllVersionsOfFile = (projectId, originalFilename) => request(`/projects/${projectId}/files/versions?filename=${encodeURIComponent(originalFilename)}`, 'GET');
+export const deleteProjectFileApi = (projectId, fileId) => request(`/projects/${projectId}/files/${fileId}`, 'DELETE');
 
 // --- Collaborators ---
 export const getProjectCollaborators = (projectId, page = 0, size = 10, sort = '') => request(`/projects/${projectId}/collaborators?page=${page}&size=${size}&sort=${sort}`, 'GET');

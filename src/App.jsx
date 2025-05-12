@@ -119,14 +119,14 @@ function App() {
                             <Route path="/projects/:projectId/milestones/:milestoneId/edit" element={
                                 <ProtectedRoute><MilestoneEditPage /></ProtectedRoute>
                             } />
-                            <Route path="/projects/:projectId/files/:fileId/versions" element={
-                                <ProtectedRoute><FileDetailPage /></ProtectedRoute>
-                            } />
                             <Route path="/projects/:projectId/budget" element={
                                 <ProtectedRoute><BudgetPage /></ProtectedRoute>
                             } />
                             <Route path="/projects/:projectId/budget/create" element={
                                 <ProtectedRoute><CreateBudgetPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/:projectId/file-versions" element={
+                                <ProtectedRoute><FileDetailPage /></ProtectedRoute>
                             } />
                         </Routes>
                     </Box>

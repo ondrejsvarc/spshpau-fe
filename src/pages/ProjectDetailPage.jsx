@@ -165,7 +165,7 @@ const FileCard = ({ file, projectId, onUploadNewVersionClick }) => {
                 <Button size="small" startIcon={<UploadFileIcon/>} onClick={() => onUploadNewVersionClick(file.originalFilename)}>
                     New Version
                 </Button>
-                <Button size="small" startIcon={<VersionsIcon/>} onClick={() => navigate(`/projects/${projectId}/files/${file.id}/versions`)}>Versions</Button>
+                <Button size="small" startIcon={<VersionsIcon/>} onClick={() => navigate(`/projects/${projectId}/file-versions?filename=${encodeURIComponent(file.originalFilename)}`)}>Versions</Button>
                 <Button size="small" startIcon={<DownloadIcon/>} onClick={handleDownload}>Download</Button>
             </CardActions>
         </Card>
