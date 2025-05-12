@@ -58,7 +58,7 @@ import { uploadProjectFileApi } from '../services/api';
 
 
 // --- Horizontal Scroll Section ---
-const HorizontalScrollSection = ({ title, children, actionButton }) => (
+export const HorizontalScrollSection = ({ title, children, actionButton }) => (
     <Box sx={{ width: '100%', mt: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
             <Typography variant="h5" component="h2" gutterBottom>

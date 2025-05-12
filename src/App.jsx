@@ -29,6 +29,7 @@ import MilestoneEditPage from "./pages/MilestoneEditPage.jsx";
 import FileDetailPage from "./pages/FileDetailPage.jsx";
 import BudgetPage from "./pages/BudgetPage.jsx";
 import CreateBudgetPage from "./pages/CreateBudgetPage.jsx";
+import CreateExpensePage from "./pages/CreateExpensePage.jsx";
 
 const theme = createTheme({
     palette: {
@@ -119,14 +120,17 @@ function App() {
                             <Route path="/projects/:projectId/milestones/:milestoneId/edit" element={
                                 <ProtectedRoute><MilestoneEditPage /></ProtectedRoute>
                             } />
-                            <Route path="/projects/:projectId/budget" element={
-                                <ProtectedRoute><BudgetPage /></ProtectedRoute>
-                            } />
                             <Route path="/projects/:projectId/budget/create" element={
                                 <ProtectedRoute><CreateBudgetPage /></ProtectedRoute>
                             } />
                             <Route path="/projects/:projectId/file-versions" element={
                                 <ProtectedRoute><FileDetailPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/:projectId/budget" element={
+                                <ProtectedRoute><BudgetPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/:projectId/budget/expenses/new" element={
+                                <ProtectedRoute><CreateExpensePage /></ProtectedRoute>
                             } />
                         </Routes>
                     </Box>

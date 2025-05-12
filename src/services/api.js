@@ -177,3 +177,8 @@ export const getProjectCollaborators = (projectId, page = 0, size = 10, sort = '
 export const getProjectBudget = (projectId) => request(`/projects/${projectId}/budget`, 'GET');
 export const getRemainingProjectBudget = (projectId) => request(`/projects/${projectId}/budget/remaining`, 'GET');
 export const createProjectBudgetApi = (projectId, budgetData) => request(`/projects/${projectId}/budget`, 'POST', budgetData);
+export const updateProjectBudgetApi = (projectId, budgetUpdateData) => request(`/projects/${projectId}/budget`, 'PUT', budgetUpdateData);
+
+export const getProjectExpenses = (projectId, page = 0, size = 10, sort = 'date,desc') => request(`/projects/${projectId}/budget/expenses?page=${page}&size=${size}&sort=${sort}`, 'GET');
+export const createProjectExpenseApi = (projectId, expenseData) => request(`/projects/${projectId}/budget/expenses`, 'POST', expenseData);
+export const deleteProjectExpenseApi = (projectId, expenseId) => request(`/projects/${projectId}/budget/expenses/${expenseId}`, 'DELETE');
