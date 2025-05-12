@@ -84,7 +84,7 @@ function HomePage() {
                                 </TilePaper>
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}>
-                                <TilePaper onClick={() => navigate('/chats')}>
+                                <TilePaper onClick={() => navigate('/chat')}>
                                     <ChatIcon sx={{ fontSize: 40, mb: 1 }} style={{ color: '#4caf50' }}/>
                                     <Typography variant="h6">Chat Service</Typography>
                                     <Typography variant="body2">Communicate with collaborators.</Typography>
