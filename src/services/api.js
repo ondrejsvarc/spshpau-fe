@@ -159,6 +159,12 @@ export const deleteProjectApi = (projectId) => request(`/projects/${projectId}`,
 
 // --- Tasks ---
 export const getProjectTasks = (projectId, page = 0, size = 10, sort = 'createdAt,asc') => request(`/projects/${projectId}/tasks?page=${page}&size=${size}&sort=${sort}`, 'GET');
+export const createProjectTaskApi = (projectId, taskData) => request(`/projects/${projectId}/tasks`, 'POST', taskData);
+export const getProjectTaskByIdApi = (projectId, taskId) => request(`/projects/${projectId}/tasks/${taskId}`, 'GET');
+export const updateProjectTaskApi = (projectId, taskId, taskData) => request(`/projects/${projectId}/tasks/${taskId}`, 'PUT', taskData);
+export const deleteProjectTaskApi = (projectId, taskId) => request(`/projects/${projectId}/tasks/${taskId}`, 'DELETE');
+export const assignUserToTaskApi = (projectId, taskId, assigneeUserId) => request(`/projects/${projectId}/tasks/${taskId}/assign/${assigneeUserId}`, 'POST');
+export const removeUserFromTaskApi = (projectId, taskId) => request(`/projects/${projectId}/tasks/${taskId}/unassign`, 'DELETE');
 
 // --- Milestones ---
 export const getProjectMilestones = (projectId, page = 0, size = 10, sort = 'dueDate,asc') => request(`/projects/${projectId}/milestones?page=${page}&size=${size}&sort=${sort}`, 'GET');

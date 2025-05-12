@@ -109,7 +109,7 @@ const TaskCard = ({ task, projectId }) => {
                 </Typography>
             </CardContent>
             <CardActions>
-                <Button size="small" onClick={() => navigate(`/projects/${projectId}/tasks/${task.id}/edit`)}>View/Edit</Button>
+                <Button size="small" onClick={() => navigate(`/projects/${projectId}/tasks/${task.id}/edit`)}>Edit/Delete</Button>
             </CardActions>
         </Card>
     );
