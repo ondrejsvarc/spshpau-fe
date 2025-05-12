@@ -14,23 +14,42 @@ const getAuthHeaders = () => {
 };
 
 // Generic request function
-const request = async (endpoint, method = 'GET', body = null) => {
-    const headers = getAuthHeaders();
+const request = async (endpoint, method = 'GET', body = null, isFormData = false) => {
+    console.log(`API Request: ${method} ${endpoint}, isFormData: ${isFormData}`);
+
+    let requestHeaders = {};
+
+    if (keycloak.authenticated && keycloak.token) {
+        requestHeaders['Authorization'] = `Bearer ${keycloak.token}`;
+    }
+
     const config = {
         method,
-        headers,
+        headers: requestHeaders,
     };
 
     if (body) {
-        config.body = JSON.stringify(body);
+        if (isFormData) {
+            config.body = body;
+        } else {
+            requestHeaders['Content-Type'] = 'application/json';
+            config.body = JSON.stringify(body);
+        }
+    }
+
+    config.headers = requestHeaders;
+
+    console.log('API Request: Sending with headers:', config.headers);
+    if (isFormData) {
+        console.log('API Request: Body is FormData, browser will set Content-Type.');
     }
 
     try {
         const response = await fetch(`${API_GATEWAY_URL}${endpoint}`, config);
         if (!response.ok) {
-            // Handle HTTP errors
             const errorData = await response.text();
             console.error(`API Error ${response.status}: ${errorData} for ${method} ${endpoint}`);
+            console.error('API Error Request Headers Sent:', config.headers);
             throw new Error(`API Error ${response.status}: ${errorData || response.statusText}`);
         }
         if (response.status === 204 || response.headers.get("content-length") === "0") {
@@ -39,6 +58,7 @@ const request = async (endpoint, method = 'GET', body = null) => {
         return await response.json();
     } catch (error) {
         console.error('Fetch API error:', error);
+        console.error('Fetch API error - Request Headers Sent:', config.headers);
         throw error;
     }
 };
@@ -134,9 +154,7 @@ export const getAllSkills = (page = 0, size = 20, sort = 'name,asc') => request(
 export const getOwnedProjects = (page = 0, size = 10, sort = 'title,asc') => request(`/projects/owned?page=${page}&size=${size}&sort=${sort}`, 'GET');
 export const getCollaboratingProjects = (page = 0, size = 10, sort = 'title,asc') => request(`/projects/collaborating?page=${page}&size=${size}&sort=${sort}`, 'GET');
 export const createProject = (projectData) => request('/projects', 'POST', projectData);
-
 export const getProjectById = (projectId) => request(`/projects/${projectId}`, 'GET');
-
 export const deleteProjectApi = (projectId) => request(`/projects/${projectId}`, 'DELETE');
 
 // --- Tasks ---
@@ -147,9 +165,7 @@ export const getProjectMilestones = (projectId, page = 0, size = 10, sort = 'due
 
 // --- Files ---
 export const getProjectFiles = (projectId) => request(`/projects/${projectId}/files`, 'GET');
-
 export const uploadProjectFileApi = (projectId, formData) => request(`/projects/${projectId}/files`, 'POST', formData, true);
-
 export const getProjectFileDownloadUrl = (projectId, fileId) => request(`/projects/${projectId}/files/${fileId}/download-url`, 'GET');
 
 // --- Collaborators ---
@@ -157,7 +173,5 @@ export const getProjectCollaborators = (projectId, page = 0, size = 10, sort = '
 
 // --- Budget ---
 export const getProjectBudget = (projectId) => request(`/projects/${projectId}/budget`, 'GET');
-
 export const getRemainingProjectBudget = (projectId) => request(`/projects/${projectId}/budget/remaining`, 'GET');
-
 export const createProjectBudgetApi = (projectId, budgetData) => request(`/projects/${projectId}/budget`, 'POST', budgetData);

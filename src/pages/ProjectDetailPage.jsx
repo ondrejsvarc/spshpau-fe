@@ -53,6 +53,9 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import VersionsIcon from '@mui/icons-material/History';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
+import FileUploadModal from '../components/FileUploadModal';
+import { uploadProjectFileApi } from '../services/api';
+
 
 // --- Horizontal Scroll Section ---
 const HorizontalScrollSection = ({ title, children, actionButton }) => (
@@ -132,7 +135,7 @@ const MilestoneCard = ({ milestone, projectId }) => {
 };
 
 // --- File Card ---
-const FileCard = ({ file, projectId }) => {
+const FileCard = ({ file, projectId, onUploadNewVersionClick }) => {
     const navigate = useNavigate();
     const handleDownload = async () => {
         try {
@@ -159,7 +162,9 @@ const FileCard = ({ file, projectId }) => {
                 </Typography>
             </CardContent>
             <CardActions sx={{justifyContent:'space-around', flexWrap:'wrap'}}>
-                <Button size="small" startIcon={<UploadFileIcon/>} onClick={() => alert('Upload new version - TBD')}>New Version</Button>
+                <Button size="small" startIcon={<UploadFileIcon/>} onClick={() => onUploadNewVersionClick(file.originalFilename)}>
+                    New Version
+                </Button>
                 <Button size="small" startIcon={<VersionsIcon/>} onClick={() => navigate(`/projects/${projectId}/files/${file.id}/versions`)}>Versions</Button>
                 <Button size="small" startIcon={<DownloadIcon/>} onClick={handleDownload}>Download</Button>
             </CardActions>
@@ -180,6 +185,8 @@ function ProjectDetailPage() {
     const [collaborators, setCollaborators] = useState([]);
     const [budgetSummary, setBudgetSummary] = useState(null);
     const [projectHasBudget, setProjectHasBudget] = useState(false);
+    const [fileUploadModalOpen, setFileUploadModalOpen] = useState(false);
+    const [uploadingForFilename, setUploadingForFilename] = useState(null);
 
     const [loading, setLoading] = useState({
         project: true, tasks: true, milestones: true, files: true, collaborators: true, budget: true
@@ -255,6 +262,30 @@ function ProjectDetailPage() {
         navigate(`/projects/${projectId}/budget/create`);
     }
 
+    const handleOpenFileUploadModal = (filename = null) => {
+        setUploadingForFilename(filename);
+        setFileUploadModalOpen(true);
+    };
+
+    const handleFileUploadSuccess = async (formData) => {
+
+        try {
+            await uploadProjectFileApi(projectId, formData);
+            setLoading(prev => ({ ...prev, files: true }));
+            getProjectFiles(projectId)
+                .then(data => setFiles(data || []))
+                .catch(err => {
+                    console.error("Failed to refresh files after upload:", err);
+                    setError("File uploaded, but failed to refresh file list.");
+                })
+                .finally(() => setLoading(prev => ({ ...prev, files: false })));
+            return Promise.resolve();
+        } catch (uploadError) {
+            console.error("Actual upload failed:", uploadError);
+            return Promise.reject(uploadError);
+        }
+    };
+
     if (loading.project && !project) return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}><CircularProgress /></Box>;
     if (error && !project) return <Container sx={{mt:3}}><Alert severity="error">{error}</Alert></Container>;
     if (!project) return <Container sx={{mt:3}}><Typography>Project not found.</Typography></Container>;
@@ -325,13 +356,26 @@ function ProjectDetailPage() {
             <HorizontalScrollSection
                 title="Files"
                 actionButton={
-                    <Button variant="contained" size="small" startIcon={<UploadFileIcon />} onClick={() => alert("Placeholder: Open Upload New File Modal/Page") /*navigate(`/projects/${projectId}/files/new`)*/}>
-                        Upload File
+                    <Button
+                        variant="contained"
+                        size="small"
+                        startIcon={<UploadFileIcon />}
+                        onClick={() => handleOpenFileUploadModal()}
+                    >
+                        Upload New File
                     </Button>
                 }
             >
                 {loading.files ? <CircularProgress sx={{mx: 'auto'}} /> :
-                    files.length > 0 ? files.map(file => <Box key={file.id} sx={{flexShrink: 0}}><FileCard file={file} projectId={projectId} /></Box>) :
+                    files.length > 0 ? files.map(file => (
+                            <Box key={file.id} sx={{flexShrink: 0}}>
+                                <FileCard
+                                    file={file}
+                                    projectId={projectId}
+                                    onUploadNewVersionClick={() => handleOpenFileUploadModal(file.originalFilename)}
+                                />
+                            </Box>
+                        )) :
                         <Typography sx={{pl:1, color:'text.secondary'}}>No files uploaded.</Typography>}
             </HorizontalScrollSection>
 
@@ -380,6 +424,15 @@ function ProjectDetailPage() {
                     </Paper>
                 </Grid>
             </Grid>
+
+            {/* File Upload Modal */}
+            <FileUploadModal
+                open={fileUploadModalOpen}
+                onClose={() => setFileUploadModalOpen(false)}
+                projectId={projectId}
+                onFileUploadSuccess={handleFileUploadSuccess}
+                existingFilename={uploadingForFilename}
+            />
 
             {/* Delete Project Confirmation Dialog */}
             <Dialog
