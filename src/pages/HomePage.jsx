@@ -81,7 +81,7 @@ function HomePage() {
                                 </TilePaper>
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}>
-                                <TilePaper onClick={() => handleTileClick('Project Service')}>
+                                <TilePaper onClick={() => navigate('/projects')}>
                                     <FolderSpecialIcon sx={{ fontSize: 40, mb: 1 }} color="secondary"/>
                                     <Typography variant="h6">Project Service</Typography>
                                     <Typography variant="body2">Organize your musical projects.</Typography>

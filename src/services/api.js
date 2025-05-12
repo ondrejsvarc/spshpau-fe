@@ -129,3 +129,35 @@ export const getInteractionStatusWithUser = (otherUserId) => request(`/interacti
 // --- General Genre & Skill API Calls (from UserService) ---
 export const getAllGenres = (page = 0, size = 20, sort = 'name,asc') => request(`/genres?page=${page}&size=${size}&sort=${sort}`, 'GET');
 export const getAllSkills = (page = 0, size = 20, sort = 'name,asc') => request(`/skills?page=${page}&size=${size}&sort=${sort}`, 'GET');
+
+// --- Project Service API Calls ---
+export const getOwnedProjects = (page = 0, size = 10, sort = 'title,asc') => request(`/projects/owned?page=${page}&size=${size}&sort=${sort}`, 'GET');
+export const getCollaboratingProjects = (page = 0, size = 10, sort = 'title,asc') => request(`/projects/collaborating?page=${page}&size=${size}&sort=${sort}`, 'GET');
+export const createProject = (projectData) => request('/projects', 'POST', projectData);
+
+export const getProjectById = (projectId) => request(`/projects/${projectId}`, 'GET');
+
+export const deleteProjectApi = (projectId) => request(`/projects/${projectId}`, 'DELETE');
+
+// --- Tasks ---
+export const getProjectTasks = (projectId, page = 0, size = 10, sort = 'createdAt,asc') => request(`/projects/${projectId}/tasks?page=${page}&size=${size}&sort=${sort}`, 'GET');
+
+// --- Milestones ---
+export const getProjectMilestones = (projectId, page = 0, size = 10, sort = 'dueDate,asc') => request(`/projects/${projectId}/milestones?page=${page}&size=${size}&sort=${sort}`, 'GET');
+
+// --- Files ---
+export const getProjectFiles = (projectId) => request(`/projects/${projectId}/files`, 'GET');
+
+export const uploadProjectFileApi = (projectId, formData) => request(`/projects/${projectId}/files`, 'POST', formData, true);
+
+export const getProjectFileDownloadUrl = (projectId, fileId) => request(`/projects/${projectId}/files/${fileId}/download-url`, 'GET');
+
+// --- Collaborators ---
+export const getProjectCollaborators = (projectId, page = 0, size = 10, sort = '') => request(`/projects/${projectId}/collaborators?page=${page}&size=${size}&sort=${sort}`, 'GET');
+
+// --- Budget ---
+export const getProjectBudget = (projectId) => request(`/projects/${projectId}/budget`, 'GET');
+
+export const getRemainingProjectBudget = (projectId) => request(`/projects/${projectId}/budget/remaining`, 'GET');
+
+export const createProjectBudgetApi = (projectId, budgetData) => request(`/projects/${projectId}/budget`, 'POST', budgetData);

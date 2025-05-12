@@ -18,6 +18,17 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ConnectionsPage from "./pages/ConnectionsPage.jsx";
 import BlocksPage from "./pages/BlocksPage.jsx";
 import UserProfilePage from "./pages/UserProfilePage.jsx";
+import ProjectsOverviewPage from './pages/ProjectsOverviewPage';
+import CreateProjectPage from './pages/CreateProjectPage';
+import ProjectDetailPage from './pages/ProjectDetailPage';
+import ManageCollaboratorsPage from './pages/ManageCollaboratorsPage';
+import CreateTaskPage from './pages/CreateTaskPage';
+import TaskEditPage from './pages/TaskEditPage';
+import CreateMilestonePage from "./pages/CreateMilestonePage.jsx";
+import MilestoneEditPage from "./pages/MilestoneEditPage.jsx";
+import FileDetailPage from "./pages/FileDetailPage.jsx";
+import BudgetPage from "./pages/BudgetPage.jsx";
+import CreateBudgetPage from "./pages/CreateBudgetPage.jsx";
 
 const theme = createTheme({
     palette: {
@@ -77,6 +88,45 @@ function App() {
                             } />
                             <Route path="/users/matches" element={
                                 <ProtectedRoute><MatchesPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects" element={
+                                <ProtectedRoute><ProjectsOverviewPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/new" element={
+                                <ProtectedRoute><CreateProjectPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/:projectId" element={
+                                <ProtectedRoute><ProjectDetailPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/:projectId" element={
+                                <ProtectedRoute><ProjectDetailPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/:projectId/collaborators" element={
+                                <ProtectedRoute><ManageCollaboratorsPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/:projectId/tasks/new" element={
+                                <ProtectedRoute><CreateTaskPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/:projectId/tasks/:taskId/edit" element={
+                                <ProtectedRoute><TaskEditPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/:projectId/milestones/new" element={
+                                <ProtectedRoute><CreateMilestonePage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/:projectId/milestones/:milestoneId/edit" element={
+                                <ProtectedRoute><MilestoneEditPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/:projectId/milestones/:milestoneId/edit" element={
+                                <ProtectedRoute><MilestoneEditPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/:projectId/files/:fileId/versions" element={
+                                <ProtectedRoute><FileDetailPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/:projectId/budget" element={
+                                <ProtectedRoute><BudgetPage /></ProtectedRoute>
+                            } />
+                            <Route path="/projects/:projectId/budget/create" element={
+                                <ProtectedRoute><CreateBudgetPage /></ProtectedRoute>
                             } />
                         </Routes>
                     </Box>
