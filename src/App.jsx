@@ -30,6 +30,7 @@ import FileDetailPage from "./pages/FileDetailPage.jsx";
 import BudgetPage from "./pages/BudgetPage.jsx";
 import CreateBudgetPage from "./pages/CreateBudgetPage.jsx";
 import CreateExpensePage from "./pages/CreateExpensePage.jsx";
+import ChatPage from "./pages/ChatPage.jsx";
 
 const theme = createTheme({
     palette: {
@@ -128,6 +129,12 @@ function App() {
                             } />
                             <Route path="/projects/:projectId/budget/expenses/new" element={
                                 <ProtectedRoute><CreateExpensePage /></ProtectedRoute>
+                            } />
+                            <Route path="/chat" element={
+                                <ProtectedRoute><ChatPage /></ProtectedRoute>
+                            } />
+                            <Route path="/chat/:recipientId" element={
+                                <ProtectedRoute><ChatPage /></ProtectedRoute>
                             } />
                         </Routes>
                     </Box>

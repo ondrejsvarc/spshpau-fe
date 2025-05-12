@@ -194,3 +194,8 @@ export const updateProjectBudgetApi = (projectId, budgetUpdateData) => request(`
 export const getProjectExpenses = (projectId, page = 0, size = 10, sort = 'date,desc') => request(`/projects/${projectId}/budget/expenses?page=${page}&size=${size}&sort=${sort}`, 'GET');
 export const createProjectExpenseApi = (projectId, expenseData) => request(`/projects/${projectId}/budget/expenses`, 'POST', expenseData);
 export const deleteProjectExpenseApi = (projectId, expenseId) => request(`/projects/${projectId}/budget/expenses/${expenseId}`, 'DELETE');
+
+// --- Chats ---
+export const getChatSummaries = () => request(`/chats/summary`, 'GET');
+
+export const getChatMessagesBetweenUsers = (senderId, recipientId) => request(`/messages/${senderId}/${recipientId}`, 'GET');
