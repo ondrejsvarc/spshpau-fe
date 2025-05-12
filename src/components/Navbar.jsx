@@ -14,6 +14,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import keycloak from '../keycloak';
 import { useNavigate } from 'react-router-dom';
+import {Badge} from "@mui/material";
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -59,12 +60,15 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 
 function Navbar() {
-    const { appUser, loadingUser, keycloakAuthenticated } = useUser();
+    const { appUser, loadingUser, keycloakAuthenticated, hasPendingRequests, refreshRequests } = useUser();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
 
-    const handleMenu = (event) => setAnchorEl(event.currentTarget);
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+        if (refreshRequests) refreshRequests();
+    };
     const handleClose = () => setAnchorEl(null);
 
     const handleLogout = () => {
@@ -145,9 +149,11 @@ function Navbar() {
                             onClick={handleMenu}
                             color="inherit"
                         >
-                            <AccountCircle />
+                            <Badge color="error" variant="dot" invisible={!hasPendingRequests}>
+                                <AccountCircle />
+                            </Badge>
                             <Typography variant="subtitle1" sx={{ ml: 1, display: { xs: 'none', sm: 'block' } }}>
-                                {loadingUser ? 'Loading...' : displayName}
+                                {loadingUser && !appUser ? 'Loading...' : displayName}
                             </Typography>
                         </IconButton>
                         <Menu
@@ -160,7 +166,14 @@ function Navbar() {
                             onClose={handleClose}
                         >
                             <MenuItem onClick={handleAccount}>My Account</MenuItem>
-                            <MenuItem onClick={handleConnections}>My Connections</MenuItem>
+                            <MenuItem onClick={handleConnections}>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                    My Connections
+                                    {hasPendingRequests && (
+                                        <Badge color="error" variant="dot" sx={{ ml: 1.5 }} />
+                                    )}
+                                </Box>
+                            </MenuItem>
                             <MenuItem onClick={handleBlocks}>My Blocks</MenuItem>
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </Menu>
